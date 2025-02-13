@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+        <!-- GTM Code (directly added in the head) -->
+        <script>
+            (function(w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+            var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s),
+                dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+            })(window, document, 'script', 'dataLayer', 'GTM-NFZW3JVK');
+        </script>
+    
+        <!-- <noscript> tag for users without JavaScript -->
+        <noscript>
+            <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NFZW3JVK" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+        </noscript>
+
+</head>
+<body>
+    <div class="container">
+        <h1>URL Converter</h1>
+        <input type="text" id="urlInput" placeholder="Enter the URL here...">
+        <button onclick="convertAndWatch()">Watch Video</button>
+    </div>
+
+    <script>
+        function convertAndWatch() {
+            const inputUrl = document.getElementById('urlInput').value.trim();
+            if (!inputUrl) {
+                alert('Please enter a URL.');
+                return;
+            }
+
+            try {
+                const convertedUrl = convertUrl(inputUrl);
+                window.open(convertedUrl, '_blank');
+            } catch (error) {
+                alert('Invalid URL format. Please check the URL and try again.');
+                console.error(error);
+            }
+        }
+
+        function convertUrl(url) {
+            // Extract the path after the domain
+            const urlObj = new URL(url);
+            const pathParts = urlObj.pathname.split('/').filter(part => part !== '');
+
+            // Find the index where the duplication part starts
+            let duplicationIndex = -1;
+            for (let i = 0; i < pathParts.length - 1; i++) {
+                if (pathParts[i] === pathParts[i + 1].split('-')[0]) {
+                    duplicationIndex = i;
+                    break;
+                }
+            }
+
+            if (duplicationIndex === -1) {
+                throw new Error('Duplication part not found in the URL.');
+            }
+
+            // Remove "media/thumbs" from the random part
+            const randomPart = pathParts.slice(0, duplicationIndex).join('/') + '/';
+            const cleanedRandomPart = randomPart.replace('media/thumbs/', '');
+
+            // Ensure the duplication part has a .mp4 extension
+            const duplicationPart = pathParts[duplicationIndex].replace(/\.[^/.]+$/, '.mp4');
+
+            // Construct the new URL
+            const startingPart = 'https://media.theync.com/videos/';
+            const newUrl = startingPart + cleanedRandomPart + duplicationPart;
+
+            return newUrl;
+        }
+    </script>
+</body>
+</html> 
